@@ -11,6 +11,9 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 extra["springCloudVersion"] = "Hoxton.SR8"
 
 dependencies {
+
+    implementation(project(":rmkt-core"))
+
     implementation("org.springframework.boot:spring-boot-starter-amqp")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
