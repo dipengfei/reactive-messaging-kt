@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
 	id("org.springframework.boot")
 	id("io.spring.dependency-management")
@@ -33,16 +31,5 @@ dependencies {
 dependencyManagement {
 	imports {
 		mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
-	}
-}
-
-tasks.withType<Test> {
-	useJUnitPlatform()
-}
-
-tasks.withType<KotlinCompile> {
-	kotlinOptions {
-		freeCompilerArgs = listOf("-Xjsr305=strict")
-		jvmTarget = "11"
 	}
 }
