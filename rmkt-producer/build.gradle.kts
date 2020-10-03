@@ -14,6 +14,8 @@ dependencies {
 
     implementation(project(":rmkt-core"))
 
+    implementation("org.apache.commons:commons-lang3:3.11")
+
     implementation("org.springframework.boot:spring-boot-starter-amqp")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
