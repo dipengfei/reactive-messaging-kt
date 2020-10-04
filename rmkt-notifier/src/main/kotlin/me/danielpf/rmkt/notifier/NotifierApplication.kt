@@ -1,9 +1,9 @@
 package me.danielpf.rmkt.notifier
 
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import me.danielpf.rmkt.core.Constants
+import me.danielpf.rmkt.core.Constants.Companion.DEFAULT_CURRENCY
+import me.danielpf.rmkt.core.Constants.Companion.PRODUCT_EXCHANGE_TOPIC
+import me.danielpf.rmkt.core.ObjectMapperExtension
 import me.danielpf.rmkt.core.ProductExchange
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -65,14 +65,11 @@ class NotifyService(private val container: ReactiveRedisMessageListenerContainer
     fun init() =
         processor.sink().let { sink ->
             container.receive(
-                listOf(ChannelTopic.of("topic:pe")),
+                listOf(ChannelTopic.of(PRODUCT_EXCHANGE_TOPIC)),
                 RedisSerializationContext.SerializationPair.fromSerializer(StringRedisSerializer()),
                 RedisSerializationContext.SerializationPair.fromSerializer(
                     Jackson2JsonRedisSerializer(ProductExchange::class.java).also {
-                        it.setObjectMapper(
-                            jacksonObjectMapper().registerModules(Jdk8Module(), JavaTimeModule())
-                                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                        )
+                        it.setObjectMapper(ObjectMapperExtension.instance)
                     }
                 )
             )
@@ -85,7 +82,7 @@ class NotifyService(private val container: ReactiveRedisMessageListenerContainer
     fun notifyEvents(currency: String): Flux<ServerSentEvent<ProductLocal>> =
         processor.map { p ->
 
-            (if (!p.localPrices.containsKey(currency.toUpperCase())) "USD" else currency.toUpperCase())
+            (if (currency.toUpperCase() !in p.localPrices.keys) DEFAULT_CURRENCY else currency.toUpperCase())
                 .let {
                     ProductLocal(
                         p.product.id,
