@@ -1,9 +1,7 @@
 package me.danielpf.rmkt.consumer
 
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import me.danielpf.rmkt.core.Constants.Companion.PRODUCT_EXCHANGE_TOPIC
+import me.danielpf.rmkt.core.ObjectMapperExtension
 import me.danielpf.rmkt.core.ProductExchange
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -36,7 +34,7 @@ class ConsumerConfig {
         Function {
             it.filter { pe -> pe.product.price > 500.00 }
                 .log()
-                .flatMap { pe -> operations.convertAndSend("topic:pe", pe) }
+                .flatMap { pe -> operations.convertAndSend(PRODUCT_EXCHANGE_TOPIC, pe) }
                 .then()
         }
 
@@ -44,10 +42,7 @@ class ConsumerConfig {
     fun productExchangeReactiveRedisOperations(factory: ReactiveRedisConnectionFactory): ReactiveRedisOperations<String, ProductExchange> =
 
         Jackson2JsonRedisSerializer(ProductExchange::class.java).also {
-            it.setObjectMapper(
-                jacksonObjectMapper().registerModules(Jdk8Module(), JavaTimeModule())
-                    .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-            )
+            it.setObjectMapper(ObjectMapperExtension.instance)
         }.let {
             RedisSerializationContext.newSerializationContext<String, ProductExchange>(StringRedisSerializer())
                 .value(it).build()
