@@ -1,6 +1,5 @@
 package me.danielpf.rmkt.notifier
 
-import me.danielpf.rmkt.core.Constants
 import me.danielpf.rmkt.core.Constants.Companion.DEFAULT_CURRENCY
 import me.danielpf.rmkt.core.Constants.Companion.PRODUCT_EXCHANGE_TOPIC
 import me.danielpf.rmkt.core.ObjectMapperExtension
@@ -35,7 +34,6 @@ fun main(args: Array<String>) {
                 bean<ReactiveRedisMessageListenerContainer>()
                 bean<NotifyService>()
                 bean {
-
                     ref<NotifyService>().let { notifyService ->
                         router {
                             GET("/pl/{currency}") {
@@ -49,13 +47,11 @@ fun main(args: Array<String>) {
                             }
                         }
                     }
-
                 }
             }
         )
     }
 }
-
 
 class NotifyService(private val container: ReactiveRedisMessageListenerContainer) {
 
@@ -81,7 +77,6 @@ class NotifyService(private val container: ReactiveRedisMessageListenerContainer
 
     fun notifyEvents(currency: String): Flux<ServerSentEvent<ProductLocal>> =
         processor.map { p ->
-
             (if (currency.toUpperCase() !in p.localPrices.keys) DEFAULT_CURRENCY else currency.toUpperCase())
                 .let {
                     ProductLocal(

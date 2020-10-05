@@ -30,7 +30,8 @@ fun main(args: Array<String>) {
 class ConsumerConfig {
 
     @Bean
-    fun productExchangeConsumer(operations: ReactiveRedisOperations<String, ProductExchange>): Function<Flux<ProductExchange>, Mono<Void>> =
+    fun productExchangeConsumer(operations: ReactiveRedisOperations<String, ProductExchange>)
+            : Function<Flux<ProductExchange>, Mono<Void>> =
         Function {
             it.filter { pe -> pe.product.price > 500.00 }
                 .log()
@@ -39,7 +40,8 @@ class ConsumerConfig {
         }
 
     @Bean
-    fun productExchangeReactiveRedisOperations(factory: ReactiveRedisConnectionFactory): ReactiveRedisOperations<String, ProductExchange> =
+    fun productExchangeReactiveRedisOperations(factory: ReactiveRedisConnectionFactory)
+            : ReactiveRedisOperations<String, ProductExchange> =
 
         Jackson2JsonRedisSerializer(ProductExchange::class.java).also {
             it.setObjectMapper(ObjectMapperExtension.instance)

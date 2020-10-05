@@ -19,6 +19,7 @@ fun main(args: Array<String>) {
 
 @Configuration
 class ProcessorConfig {
+
     @Bean
     fun productProcessor(): Function<Flux<Product>, Flux<ProductExchange>> = Function {
         it.log()
@@ -31,6 +32,5 @@ class ProcessorConfig {
                 )
             }.log()
     }
-
 
 }
