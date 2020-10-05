@@ -33,5 +33,4 @@ class Constants {
 object ObjectMapperExtension {
     val instance: ObjectMapper = jacksonObjectMapper().registerModules(Jdk8Module(), JavaTimeModule())
         .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-
 }
